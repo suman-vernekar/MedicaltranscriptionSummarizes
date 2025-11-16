@@ -1,0 +1,156 @@
+
+{
+  "entities": {
+    "User": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "User",
+      "type": "object",
+      "description": "Represents a user of the MediSummarize application.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the User entity."
+        },
+        "email": {
+          "type": "string",
+          "description": "Email address of the user.",
+          "format": "email"
+        },
+        "fullName": {
+          "type": "string",
+          "description": "The user's full name."
+        },
+        "photoURL": {
+          "type": "string",
+          "description": "URL of the user's profile picture.",
+          "format": "uri"
+        }
+      },
+      "required": [
+        "id",
+        "email"
+      ]
+    },
+    "SummaryHistory": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "SummaryHistory",
+      "type": "object",
+      "description": "Represents a summary history entry for a medical transcription.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the SummaryHistory entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:N SummaryHistory)"
+        },
+        "uploadDate": {
+          "type": "string",
+          "description": "Date and time when the medical transcription was uploaded.",
+          "format": "date-time"
+        },
+        "summaryText": {
+          "type": "string",
+          "description": "The generated summary text."
+        },
+        "originalDocumentName": {
+          "type": "string",
+          "description": "The file name of the document that was summarized."
+        },
+        "summaryLength": {
+          "type": "string",
+          "description": "The requested length of the summary.",
+          "enum": ["short", "medium", "long"]
+        },
+        "files": {
+          "type": "array",
+          "description": "A list of files associated with the summary.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string",
+                "format": "uri"
+              }
+            },
+            "required": ["name", "url"]
+          }
+        },
+        "qna": {
+          "type": "array",
+          "description": "A list of questions and answers related to the summary.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "question": { "type": "string" },
+              "answer": { "type": "string" }
+            },
+            "required": ["question", "answer"]
+          }
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "uploadDate",
+        "summaryText",
+        "originalDocumentName",
+        "summaryLength"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "storage": {
+    "rules": "rules_version = '2';\nservice firebase.storage {\n  match /b/{bucket}/o {\n    match /users/{userId}/profile.jpg {\n      allow read, write: if request.auth != null && request.auth.uid == userId;\n    }\n    match /users/{userId}/summaries/{summaryId}/{fileName} {\n      allow read, write: if request.auth != null && request.auth.uid == userId;\n    }\n  }\n}\n"
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "User",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "Stores user profiles.  Each user document is uniquely identified by their userId.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/summaryHistory/{summaryHistoryId}",
+        "definition": {
+          "entityName": "SummaryHistory",
+          "schema": {
+            "$ref": "#/backend/entities/SummaryHistory"
+          },
+          "description": "Stores the history of summaries generated for each user. This path enables path-based ownership.  Each summary history entry is specific to the user identified by userId.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            },
+            {
+              "name": "summaryHistoryId",
+              "description": "The unique identifier for the summary history entry."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore structure is designed to store user information and their summary history of medical transcriptions. It follows a path-based ownership model for the `SummaryHistory` subcollection, ensuring data isolation and simplified security rules. The `SummaryHistory` is stored as a subcollection under each user document, following the `/users/{userId}/summaryHistory/{summaryHistoryId}` structure. This design ensures authorization independence, as access to a user's summary history is solely determined by the user's ID and does not rely on parent document data. This approach also simplifies `list` operations, as rules can easily filter summary histories based on the authenticated user. This structure inherently supports the required QAPs by leveraging path-based ownership."
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "placeholderImages": [
+    {
+      "id": "feature-hero",
+      "description": "A doctor or medical professional using a computer, representing the app's utility.",
+      "imageUrl": "https://images.unsplash.com/photo-1666886573531-48d2e3c2b684?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxkb2N0b3IlMjBjb21wdXRlcnxlbnwwfHx8fDE3NjI3OTI1Mzd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "doctor computer"
+    }
+  ]
+}
