@@ -122,9 +122,10 @@ Download / New Upload → End
 
 ## 🚀 Installation & Execution Steps
 
-### Step 1: Clone the Repository
+# Step 1: Clone the Repository
 git clone https://github.com/your-username/medical-transcript-summarization.git
 cd medical-transcript-summarization
+
 # Step 2: Create Virtual Environment (Optional but Recommended)
 python -m venv venv
 
@@ -149,3 +150,4 @@ python app.py
 # Step 6: Access the Application
 # Open your browser and go to:
 # http://127.0.0.1:5000
+
