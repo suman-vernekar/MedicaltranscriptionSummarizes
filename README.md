@@ -1,4 +1,4 @@
-# 🏥 MediSummarize - AI-Powered Medical Transcription Summarization
+# 🏥 MediSummarize - AI-Powered Medical Transcription Summarizations
 
 ## 📘 Project Description
 
