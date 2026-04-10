@@ -1,5 +1,5 @@
 import os
-from pathlib import Pa
+from pathlib import Path
 
 def check_api_key():
     """Check if Google AI API key is configured"""
